@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Alert, ImageBackground, StyleSheet, Image, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, Alert, ImageBackground, StyleSheet, Image, SafeAreaView, StatusBar, TouchableOpacity } from 'react-native';
 import Board from './components/Board';
 import styles from './styles';  // Importa los estilos desde styles.js
 
@@ -55,6 +55,7 @@ const App = () => {
 	const [victory, setVictory] = useState(false);
 	const [initialized, setInitialized] = useState(false); // Nuevo estado para controlar la inicialización del juego
 	const [showImage, setShowImage] = useState(false); // Estado para mostrar la imagen después de la victoria
+	const [showGame, setShowGame] = useState(false); // Estado para controlar la pantalla de inicio
 
 	useEffect(() => {
 		const newBoard = generateBoard(10, 10, 10);
@@ -140,23 +141,53 @@ const App = () => {
 		}
 	};
 
+	const handleStartGame = () => {
+		setShowGame(true);
+	};
+
 	return (
 		<SafeAreaView style={stylesApp.container}>
-			<View style={styles.app}>
-				<Text style={styles.title}>Buscaminas</Text>
-				{!victory && (
-					<ImageBackground
-						source={require('./assets/buscaminas-1.jpeg')}
-						style={styles.board}>
-						<Board board={board} onClick={handleClick} onLongPress={handleContextMenu} />
-					</ImageBackground>
-				)}
-				{victory && (
-					<View style={styles.victoryImage}>
-						<Image source={require('./assets/buscaminas-1.jpeg')} style={styles.victoryImageImg} />
+			{!showGame ? (
+				<View style={stylesApp.startScreen}>
+					<Image source={require('./assets/title.png')} style={stylesApp.title} />
+					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
+						<Image source={require('./assets/start.png')} style={stylesApp.buttonImage} />
+					</TouchableOpacity>
+					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
+						<Image source={require('./assets/continue.png')} style={stylesApp.buttonImage} />
+					</TouchableOpacity>
+					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
+						<Image source={require('./assets/gallery.png')} style={stylesApp.buttonImage} />
+					</TouchableOpacity>
+					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
+						<Text style={stylesApp.buttonText}>Options</Text>
+					</TouchableOpacity>
+				</View>
+			) : (
+				<View style={styles.app}>
+					<View>
 					</View>
-				)}
-			</View>
+					<View style={stylesApp.info}>
+						<Image source={require('./assets/avatar.png')} style={stylesApp.avatar} />
+						<View>
+							<Text style={stylesApp.name}>Name: Topota madre</Text>
+							<Text style={stylesApp.age}>Age: 22</Text>
+						</View>
+					</View>
+					<Text style={styles.title}>Buscaminas</Text>
+					{!victory ? (
+						<ImageBackground
+							source={require('./assets/buscaminas-1.jpeg')}
+							style={styles.board}>
+							<Board board={board} onClick={handleClick} onLongPress={handleContextMenu} />
+						</ImageBackground>
+					) : (
+						<View style={styles.victoryImage}>
+							<Image source={require('./assets/buscaminas-1.jpeg')} style={styles.victoryImageImg} />
+						</View>
+					)}
+				</View>
+			)}
 			<StatusBar style="auto" />
 		</SafeAreaView>
 	);
@@ -166,10 +197,48 @@ const stylesApp = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
-	text: {
-		fontSize: 25,
-		fontWeight: '500',
+	startScreen: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
+	title: {
+		width: 400,
+		height: 200,
+		objectFit: 'contain',
+	},
+	button: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: 'fit-content',
+		height: 100,
+	},
+	buttonImage: {
+		width: 500,
+		height: 100,
+		objectFit: 'contain',
+	},
+	info: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	name: {
+		fontSize: 20,
+		fontWeight: 'bold',
+	},
+	age: {
+		fontSize: 20,
+	},
+	avatar: {
+		width: 100,
+		height: 100,
+		borderRadius: 100,
+		borderColor: 'black',
+		borderWidth: 1,
+		objectFit: 'cover',
+	}
 });
 
 export default App;
