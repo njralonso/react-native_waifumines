@@ -151,21 +151,23 @@ const App = () => {
 				<View style={stylesApp.startScreen}>
 					<Image source={require('./assets/title.png')} style={stylesApp.title} />
 					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-						<Image source={require('./assets/start.png')} style={stylesApp.buttonImage} />
+						<Image source={require('./assets/images/buttons/home-screen/start.png')} style={stylesApp.buttonImage} />
 					</TouchableOpacity>
 					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-						<Image source={require('./assets/continue.png')} style={stylesApp.buttonImage} />
+						<Image source={require('./assets/images/buttons/home-screen/continue.png')} style={stylesApp.buttonImage} />
 					</TouchableOpacity>
 					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-						<Image source={require('./assets/gallery.png')} style={stylesApp.buttonImage} />
+						<Image source={require('./assets/images/buttons/home-screen/gallery.png')} style={stylesApp.buttonImage} />
 					</TouchableOpacity>
 					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-						<Text style={stylesApp.buttonText}>Options</Text>
+						<Image source={require('./assets/images/buttons/home-screen/options-home.png')} style={stylesApp.buttonImage} />
 					</TouchableOpacity>
 				</View>
 			) : (
 				<View style={styles.app}>
-					<View>
+					<View style={{ 'flex': 1, 'flexDirection': 'row', 'justifyContent': 'space-around', 'width': '100%', 'marginTop': 16 }}>
+						<Image source={require('./assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50 }} />
+						<Image source={require('./assets/images/buttons/ingame/options.png')} style={{ 'width': 50, 'height': 50, }} />
 					</View>
 					<View style={stylesApp.info}>
 						<Image source={require('./assets/avatar.png')} style={stylesApp.avatar} />
@@ -211,11 +213,12 @@ const stylesApp = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
-		width: 'fit-content',
-		height: 100,
+		// width: 'fit-content',
+		// height: 100,
+		width: 100
 	},
 	buttonImage: {
-		width: 500,
+		width: 200,
 		height: 100,
 		objectFit: 'contain',
 	},
