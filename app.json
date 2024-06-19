@@ -12,7 +12,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.njralonso.waifumines"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +27,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "2315bb54-9fab-433e-9d5e-02e0a4abde1f"
+        "projectId": "a00c860a-fe93-4142-8495-fad280175a1b"
       }
     }
   }

@@ -6,6 +6,7 @@ export default StyleSheet.create({
 		flexDirection: 'column',
 		alignItems: 'center',
 		justifyContent: 'center',
+		position: 'relative'
 	},
 	board: {
 		display: 'grid',  // React Native no tiene soporte directo para grid, puedes usar flexbox

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Alert, ImageBackground, StyleSheet, Image, SafeAreaView, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, ImageBackground, StyleSheet, Image, SafeAreaView, StatusBar, TouchableOpacity, Pressable, Modal } from 'react-native';
 import Board from './components/Board';
 import styles from './styles';  // Importa los estilos desde styles.js
+import Pause from './components/Pause';
+import { Audio } from 'expo-av';
+
 
 const generateBoard = (rows, cols, mines) => {
 	let board = Array(rows)
@@ -56,12 +59,34 @@ const App = () => {
 	const [initialized, setInitialized] = useState(false); // Nuevo estado para controlar la inicialización del juego
 	const [showImage, setShowImage] = useState(false); // Estado para mostrar la imagen después de la victoria
 	const [showGame, setShowGame] = useState(false); // Estado para controlar la pantalla de inicio
+	const [newGame, setNewGame] = useState(false); // Estado para controlar el inicio de un nuevo juego
+	const [pause, setPause] = useState(false); // Estado para controlar la pausa del juego
+	const [sound, setSound] = useState();
+
+	async function loadSound() {
+		const { sound } = await Audio.Sound.createAsync(
+			require('./assets/sounds/menu/opening.mp3')
+		);
+		setSound(sound);
+		await sound.playAsync();
+	}
+
+	useEffect(() => {
+		loadSound();
+
+		return sound
+			? () => {
+				sound.unloadAsync();
+			}
+			: undefined;
+	}, []);
 
 	useEffect(() => {
 		const newBoard = generateBoard(10, 10, 10);
 		setBoard(newBoard);
 		setInitialized(true); // Marcamos que el juego se ha inicializado
-	}, []);
+		setNewGame(false); // Reseteamos el estado de nuevo juego
+	}, [setNewGame]);
 
 	useEffect(() => {
 		if (initialized && !gameOver && checkVictory()) {
@@ -141,13 +166,59 @@ const App = () => {
 		}
 	};
 
+	// Start Game
 	const handleStartGame = () => {
 		setShowGame(true);
+		const newBoard = generateBoard(10, 10, 10);
+		setBoard(newBoard);
+		setGameOver(false);
+		setVictory(false);
+		setShowImage(false);
+		setInitialized(true);
 	};
+
+	// Go to Home
+	const handleGoHome = () => {
+		setShowGame(false);
+	};
+
+	const handleResetGame = () => {
+		const newBoard = generateBoard(10, 10, 10);
+		setBoard(newBoard);
+		setGameOver(false);
+		setVictory(false);
+		setShowImage(false);
+		setInitialized(true);
+	};
+
+	const handleShowPauseOptions = () => {
+		setPause(true);
+		callModal();
+	}
+
+	const callModal = () => {
+		<Modal animationType="slide"
+			transparent={true}>
+			<View>
+				<Text>Pause</Text>
+				<TouchableOpacity onPress={() => setPause(false)}>
+					<Text>Continue</Text>
+				</TouchableOpacity>
+				<TouchableOpacity onPress={handleResetGame}>
+					<Text>Restart</Text>
+				</TouchableOpacity>
+				<TouchableOpacity onPress={handleGoHome}>
+					<Text>Go Home</Text>
+				</TouchableOpacity>
+			</View>
+		</Modal>
+	}
+
 
 	return (
 		<SafeAreaView style={stylesApp.container}>
 			{!showGame ? (
+				// HomeScreen
 				<View style={stylesApp.startScreen}>
 					<Image source={require('./assets/title.png')} style={stylesApp.title} />
 					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
@@ -165,33 +236,46 @@ const App = () => {
 				</View>
 			) : (
 				<View style={styles.app}>
-					<View style={{ 'flex': 1, 'flexDirection': 'row', 'justifyContent': 'space-around', 'width': '100%', 'marginTop': 16 }}>
-						<Image source={require('./assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50 }} />
-						<Image source={require('./assets/images/buttons/ingame/options.png')} style={{ 'width': 50, 'height': 50, }} />
+					<View style={{ 'flexDirection': 'row', 'justifyContent': 'space-between', 'width': '100%', 'position': 'absolute', 'top': 16, 'paddingHorizontal': 16 }}>
+						<TouchableOpacity style={stylesApp.buttonGame} onPress={handleGoHome}>
+							<Image source={require('./assets/images/buttons/ingame/home.png')} style={stylesApp.buttonGameImage} />
+						</TouchableOpacity>
+						<TouchableOpacity style={stylesApp.buttonGame} onPress={handleResetGame}>
+							<Image source={require('./assets/images/buttons/ingame/options.png')} style={stylesApp.buttonGameImage} />
+						</TouchableOpacity>
 					</View>
 					<View style={stylesApp.info}>
 						<Image source={require('./assets/avatar.png')} style={stylesApp.avatar} />
-						<View>
-							<Text style={stylesApp.name}>Name: Topota madre</Text>
-							<Text style={stylesApp.age}>Age: 22</Text>
+						<View style={{ 'marginLeft': 16 }}>
+							<Text style={stylesApp.waifuData}>Name: Topota madre</Text>
+							<Text style={stylesApp.waifuData}>Age: 22</Text>
 						</View>
 					</View>
-					<Text style={styles.title}>Buscaminas</Text>
-					{!victory ? (
-						<ImageBackground
-							source={require('./assets/buscaminas-1.jpeg')}
-							style={styles.board}>
-							<Board board={board} onClick={handleClick} onLongPress={handleContextMenu} />
-						</ImageBackground>
-					) : (
-						<View style={styles.victoryImage}>
-							<Image source={require('./assets/buscaminas-1.jpeg')} style={styles.victoryImageImg} />
-						</View>
-					)}
+					<View>
+						{!victory ? (
+							<ImageBackground
+								source={require('./assets/buscaminas-1.jpeg')}>
+								<Board board={board} onClick={handleClick} onLongPress={handleContextMenu} />
+							</ImageBackground>
+						) : (
+							<View style={styles.victoryImage}>
+								<Image source={require('./assets/buscaminas-1.jpeg')} style={styles.victoryImageImg} />
+							</View>
+						)}
+					</View>
+					<View>
+						<Pressable
+							style={{ 'marginTop': 16, width: 50, height: 50, objectFit: 'contain' }}
+							onPress={handleShowPauseOptions}
+						>
+							<Pause handleResetGame={handleResetGame} />
+						</Pressable>
+					</View>
 				</View>
-			)}
+			)
+			}
 			<StatusBar style="auto" />
-		</SafeAreaView>
+		</SafeAreaView >
 	);
 };
 
@@ -217,22 +301,31 @@ const stylesApp = StyleSheet.create({
 		// height: 100,
 		width: 100
 	},
+	buttonGame: {
+		width: 50,
+		height: 50,
+	},
+	buttonGameImage: {
+		width: 'max-content',
+		height: 50,
+		'objectFit': 'cover',
+	},
 	buttonImage: {
 		width: 200,
 		height: 100,
 		objectFit: 'contain',
 	},
 	info: {
+		paddingHorizontal: 16,
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'center',
+		// justifyContent: 'space-around',
+		width: '100%',
+		marginBottom: 16,
 	},
-	name: {
+	waifuData: {
 		fontSize: 20,
 		fontWeight: 'bold',
-	},
-	age: {
-		fontSize: 20,
 	},
 	avatar: {
 		width: 100,
