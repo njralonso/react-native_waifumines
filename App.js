@@ -4,7 +4,7 @@ import Board from './components/Board';
 import styles from './styles';  // Importa los estilos desde styles.js
 import Pause from './components/Pause';
 import { Audio } from 'expo-av';
-
+import { Animated } from 'react-native';
 
 const generateBoard = (rows, cols, mines) => {
 	let board = Array(rows)
@@ -62,6 +62,9 @@ const App = () => {
 	const [newGame, setNewGame] = useState(false); // Estado para controlar el inicio de un nuevo juego
 	const [pause, setPause] = useState(false); // Estado para controlar la pausa del juego
 	const [sound, setSound] = useState();
+	const [titleAnim] = useState(new Animated.Value(-200));  // Posición inicial fuera de la pantalla
+	const [buttonAnim] = useState(new Animated.Value(700));  // Posición inicial fuera de la pantalla
+	const [victoryAnim] = useState(new Animated.Value(0));  // Comienza con opacidad 0
 
 	async function loadSound() {
 		const { sound } = await Audio.Sound.createAsync(
@@ -70,6 +73,21 @@ const App = () => {
 		setSound(sound);
 		await sound.playAsync();
 	}
+
+	useEffect(() => {
+		Animated.sequence([
+			Animated.timing(titleAnim, {
+				toValue: 0,  // Posición final en la pantalla
+				duration: 1000,
+				useNativeDriver: true,
+			}),
+			Animated.timing(buttonAnim, {
+				toValue: 0,
+				duration: 500,
+				useNativeDriver: true,
+			})
+		]).start();
+	}, []);
 
 	useEffect(() => {
 		loadSound();
@@ -91,11 +109,16 @@ const App = () => {
 	useEffect(() => {
 		if (initialized && !gameOver && checkVictory()) {
 			setVictory(true);
+			Animated.timing(victoryAnim, {
+				toValue: 1,  // Termina con opacidad 1
+				duration: 1000,
+				useNativeDriver: true,
+			}).start();
 			setTimeout(() => {
-				setShowImage(true); // Mostramos la imagen después de 1 segundo
+				setShowImage(true);
 			}, 1000);
 		}
-	}, [board, gameOver, initialized]); // Añadimos initialized como dependencia
+	}, [board, gameOver, initialized]);
 
 	const checkVictory = () => {
 		for (let row of board) {
@@ -167,7 +190,11 @@ const App = () => {
 	};
 
 	// Start Game
-	const handleStartGame = () => {
+	const handleStartGame = async () => {
+		if (sound) {
+			await sound.stopAsync();  // Detiene la música del menú
+		}
+
 		setShowGame(true);
 		const newBoard = generateBoard(10, 10, 10);
 		setBoard(newBoard);
@@ -175,10 +202,13 @@ const App = () => {
 		setVictory(false);
 		setShowImage(false);
 		setInitialized(true);
+
 	};
 
 	// Go to Home
-	const handleGoHome = () => {
+	const handleGoHome = async () => {
+		setSound(sound);
+		await sound.playAsync();
 		setShowGame(false);
 	};
 
@@ -218,22 +248,23 @@ const App = () => {
 	return (
 		<SafeAreaView style={stylesApp.container}>
 			{!showGame ? (
-				// HomeScreen
-				<View style={stylesApp.startScreen}>
-					<Image source={require('./assets/title.png')} style={stylesApp.title} />
-					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-						<Image source={require('./assets/images/buttons/home-screen/start.png')} style={stylesApp.buttonImage} />
-					</TouchableOpacity>
-					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-						<Image source={require('./assets/images/buttons/home-screen/continue.png')} style={stylesApp.buttonImage} />
-					</TouchableOpacity>
-					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-						<Image source={require('./assets/images/buttons/home-screen/gallery.png')} style={stylesApp.buttonImage} />
-					</TouchableOpacity>
-					<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-						<Image source={require('./assets/images/buttons/home-screen/options-home.png')} style={stylesApp.buttonImage} />
-					</TouchableOpacity>
-				</View>
+				<Animated.View style={[stylesApp.startScreen, { transform: [{ translateY: titleAnim }] }]}>
+					<Animated.Image source={require('./assets/title.png')} style={[stylesApp.title, { transform: [{ translateY: titleAnim }] }]} />
+					<Animated.View style={{ transform: [{ translateY: buttonAnim }] }}>
+						<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
+							<Image source={require('./assets/images/buttons/home-screen/start.png')} style={stylesApp.buttonImage} />
+						</TouchableOpacity>
+						<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
+							<Image source={require('./assets/images/buttons/home-screen/continue.png')} style={stylesApp.buttonImage} />
+						</TouchableOpacity>
+						<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
+							<Image source={require('./assets/images/buttons/home-screen/gallery.png')} style={stylesApp.buttonImage} />
+						</TouchableOpacity>
+						<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
+							<Image source={require('./assets/images/buttons/home-screen/options-home.png')} style={stylesApp.buttonImage} />
+						</TouchableOpacity>
+					</Animated.View>
+				</Animated.View>
 			) : (
 				<View style={styles.app}>
 					<View style={{ 'flexDirection': 'row', 'justifyContent': 'space-between', 'width': '100%', 'position': 'absolute', 'top': 16, 'paddingHorizontal': 16 }}>
