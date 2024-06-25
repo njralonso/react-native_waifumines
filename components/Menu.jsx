@@ -1,7 +1,7 @@
 import { View, Image, StyleSheet } from "react-native"
 import MenuButton from "./MenuButton"
 
-export default Menu = ({ navigation }) => {
+export default Menu = ({ navigation, route }) => {
 	return (
 		<View style={style.container}>
 			<View style={style.titleContainer}>
@@ -12,8 +12,13 @@ export default Menu = ({ navigation }) => {
 					img={<Image style={style.menuButton} source={require('../assets/images/buttons/home-screen/play.png')} />}
 					onPress={() => navigation.navigate('WaifuSelect')}
 				/>
-				<MenuButton img={<Image style={style.menuButton} source={require('../assets/images/buttons/home-screen/gallery.png')} />} />
-				<MenuButton img={<Image style={style.menuButton} source={require('../assets/images/buttons/home-screen/options-home.png')} />} />
+				<MenuButton
+					img={<Image style={style.menuButton} source={require('../assets/images/buttons/home-screen/gallery.png')} />}
+					onPress={() => navigation.navigate('Gallery')} />
+
+				<MenuButton
+					img={<Image style={style.menuButton} source={require('../assets/images/buttons/home-screen/options-home.png')} />}
+					onPress={() => navigation.navigate('Options')} />
 			</View>
 		</View>
 	)
@@ -40,7 +45,7 @@ const style = StyleSheet.create({
 		alignItems: 'center',
 	},
 	menuButton: {
-		'width': 200,
+		'width': 300,
 		'height': 100,
 		'objectFit': 'contain'
 	}

@@ -1,4 +1,4 @@
-import { Pressable, Image } from "react-native"
+import { Pressable } from "react-native"
 
 export default MenuButton = ({ img, onPress }) => {
 	return (

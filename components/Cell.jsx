@@ -1,6 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, ImageBackground } from 'react-native';
-import styles from '../styles';
+import { TouchableOpacity, Text, ImageBackground, StyleSheet } from 'react-native';
 
 const Cell = ({ value, revealed, flagged, onClick, onLongPress }) => {
 	const getCellStyle = () => {
@@ -35,6 +34,40 @@ const Cell = ({ value, revealed, flagged, onClick, onLongPress }) => {
 		</TouchableOpacity>
 	);
 };
-
+const styles = StyleSheet.create({
+	cell: {
+		width: 40,
+		height: 40,
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderWidth: 1,
+		borderColor: '#ccc',
+	},
+	hidden: {
+		backgroundColor: '#fff',
+		backgroundImage: 'url(./assets/hidden.png)',
+	},
+	revealed: {
+		backgroundColor: '#fff',
+	},
+	empty: {
+		backgroundColor: '#000000A3',
+	},
+	number: {
+		backgroundColor: '#ddd',
+	},
+	bomb: {
+		justifyContent: 'flex-start',
+		alignItems: 'start',
+	},
+	bombImage: {
+		width: 40,
+		height: 40,
+		resizeMode: 'cover',
+	},
+	flagged: {
+		backgroundColor: 'yellow',
+	},
+})
 
 export default Cell;

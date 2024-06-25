@@ -1,49 +1,57 @@
-import { View, Text, Pressable, Image } from "react-native"
+import { View, Text, Pressable, Image, ImageBackground, ScrollView } from "react-native"
+import { useNavigation } from '@react-navigation/native';
 
-let waifuInfo = [{
+let waifuInfo = {
 	'name': 'Airi',
 	'age': 22,
-	'img': require('../assets/images/characters/avatar.png')
-},
-{
-	'name': 'Mika',
-	'age': 24,
-	'img': require('../assets/images/characters/avatar.png')
-},
-{
-	'name': 'Sora',
-	'age': 20,
-	'img': require('../assets/images/characters/avatar.png')
-},
-{
-	'name': 'Miku',
-	'age': 18,
-	'img': require('../assets/images/characters/avatar.png')
+	'avatar': require('../assets/images/characters/avatar.png'),
+	'stageOne': require('../assets/buscaminas-2.jpeg'),
 }
-]
+
 
 export default WaifuSelect = () => {
+	const navigation = useNavigation();
+
+	const handlePress = () => {
+		navigation.navigate('Play', { 'waifu': waifuInfo });
+	};
+
 	return (
 		<View style={{ 'flex': 1 }}>
-			{
-				waifuInfo.map((waifu, index) => {
-					return (
-						<View key={index} style={{ 'backgroundColor': 'red', 'flexDirection': 'row', 'alignItems': 'center' }}>
-							<Pressable name={waifu.name} age={waifu.age} >
-								<Image style={{ 'width': 150, 'height': 150, }} source={waifu.img} />
-							</Pressable>
-							<View>
-								<Text>
-									Name: {waifu.name}
-								</Text>
-								<Text>
-									Age: {waifu.age}
-								</Text>
-							</View>
-						</View>
-					)
-				})
-			}
+			<ScrollView style={{ 'flex': 1, backgroundColor: 'orange' }}>
+				<Pressable onPress={handlePress} style={{}}>
+					<ImageBackground source={require('../assets/images/select/select_waifu_1.png')} style={{ width: '100%', height: 200, objectFit: 'contain' }}>
+					</ImageBackground>
+				</Pressable>
+				<Pressable onPress={handlePress} style={{}}>
+					<ImageBackground source={require('../assets/images/select/select_waifu_1.png')} style={{ width: '100%', height: 200, objectFit: 'contain' }}>
+					</ImageBackground>
+				</Pressable>
+				<Pressable onPress={handlePress} style={{}}>
+					<ImageBackground source={require('../assets/images/select/select_waifu_1.png')} style={{ width: '100%', height: 200, objectFit: 'contain' }}>
+					</ImageBackground>
+				</Pressable>
+				<Pressable onPress={handlePress} style={{}}>
+					<ImageBackground source={require('../assets/images/select/select_waifu_1.png')} style={{ width: '100%', height: 200, objectFit: 'contain' }}>
+					</ImageBackground>
+				</Pressable>
+				<Pressable onPress={handlePress} style={{}}>
+					<ImageBackground source={require('../assets/images/select/select_waifu_1.png')} style={{ width: '100%', height: 200, objectFit: 'contain' }}>
+					</ImageBackground>
+				</Pressable>
+				<Pressable onPress={handlePress} style={{}}>
+					<ImageBackground source={require('../assets/images/select/select_waifu_1.png')} style={{ width: '100%', height: 200, objectFit: 'contain' }}>
+					</ImageBackground>
+				</Pressable>
+				<Pressable onPress={handlePress} style={{}}>
+					<ImageBackground source={require('../assets/images/select/select_waifu_1.png')} style={{ width: '100%', height: 200, objectFit: 'contain' }}>
+					</ImageBackground>
+				</Pressable>
+				<Pressable onPress={handlePress} style={{}}>
+					<ImageBackground source={require('../assets/images/select/select_waifu_1.png')} style={{ width: '100%', height: 200, objectFit: 'contain' }}>
+					</ImageBackground>
+				</Pressable>
+			</ScrollView>
 		</View >
 	)
 }

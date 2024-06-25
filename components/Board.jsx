@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Cell from './Cell';
-import styles from '../styles';
 
 const Board = ({ board, onClick, onLongPress, victory }) => {
 	return (
@@ -23,5 +22,17 @@ const Board = ({ board, onClick, onLongPress, victory }) => {
 		</View>
 	);
 };
+
+const styles = StyleSheet.create({
+	board: {
+		display: 'grid',  // React Native no tiene soporte directo para grid, puedes usar flexbox
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		width: 400,  // 10 * 40 (asumiendo 10 columnas de 40px)
+		height: 400,  // 10 * 40 (asumiendo 10 filas de 40px)
+		position: 'relative',
+		backgroundSize: 'cover'  // Lo puedes lograr con un ImageBackground en React Native
+	}
+})
 
 export default Board;
