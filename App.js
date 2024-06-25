@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Alert, ImageBackground, StyleSheet, Image, SafeAreaView, StatusBar, TouchableOpacity, Pressable, Modal } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Board from './components/Board';
 import styles from './styles';  // Importa los estilos desde styles.js
 import Pause from './components/Pause';
 import { Audio } from 'expo-av';
 import { Animated } from 'react-native';
+import Menu from './components/Menu';
+import WaifuSelect from './components/WaifuSelect';
+import Play from './components/Play';
+import Gallery from './components/Gallery';
+import Options from './components/Options';
+
+const Stack = createNativeStackNavigator();
 
 const generateBoard = (rows, cols, mines) => {
 	let board = Array(rows)
@@ -65,6 +74,14 @@ const App = () => {
 	const [titleAnim] = useState(new Animated.Value(-200));  // Posición inicial fuera de la pantalla
 	const [buttonAnim] = useState(new Animated.Value(700));  // Posición inicial fuera de la pantalla
 	const [victoryAnim] = useState(new Animated.Value(0));  // Comienza con opacidad 0
+	const [backgroundIndex, setBackgroundIndex] = useState(0);  // Estado para controlar el índice de la imagen de fondo
+
+	const backgrounds = [
+		require('./assets/buscaminas-1.jpeg'),
+		require('./assets/buscaminas-2.jpeg'), // Añade más imágenes de fondo aquí
+		// require('./assets/buscaminas-3.jpeg'),
+		// ...
+	];
 
 	async function loadSound() {
 		const { sound } = await Audio.Sound.createAsync(
@@ -100,7 +117,7 @@ const App = () => {
 	}, []);
 
 	useEffect(() => {
-		const newBoard = generateBoard(10, 10, 10);
+		const newBoard = generateBoard(10, 10, 0);
 		setBoard(newBoard);
 		setInitialized(true); // Marcamos que el juego se ha inicializado
 		setNewGame(false); // Reseteamos el estado de nuevo juego
@@ -114,9 +131,7 @@ const App = () => {
 				duration: 1000,
 				useNativeDriver: true,
 			}).start();
-			setTimeout(() => {
-				setShowImage(true);
-			}, 1000);
+			setShowImage(true);
 		}
 	}, [board, gameOver, initialized]);
 
@@ -129,6 +144,12 @@ const App = () => {
 			}
 		}
 		return true;
+	};
+
+	const handleGoNext = () => {
+		const nextIndex = (backgroundIndex + 1) % backgrounds.length;
+		setBackgroundIndex(nextIndex);
+		handleResetGame();
 	};
 
 	const handleClick = (row, col) => {
@@ -196,7 +217,7 @@ const App = () => {
 		}
 
 		setShowGame(true);
-		const newBoard = generateBoard(10, 10, 10);
+		const newBoard = generateBoard(10, 10, 0);
 		setBoard(newBoard);
 		setGameOver(false);
 		setVictory(false);
@@ -213,18 +234,13 @@ const App = () => {
 	};
 
 	const handleResetGame = () => {
-		const newBoard = generateBoard(10, 10, 10);
+		const newBoard = generateBoard(10, 10, 0);
 		setBoard(newBoard);
 		setGameOver(false);
 		setVictory(false);
 		setShowImage(false);
 		setInitialized(true);
 	};
-
-	const handleShowPauseOptions = () => {
-		setPause(true);
-		callModal();
-	}
 
 	const callModal = () => {
 		<Modal animationType="slide"
@@ -244,84 +260,17 @@ const App = () => {
 		</Modal>
 	}
 
-
 	return (
-		<SafeAreaView style={style.container}>
-			{!showGame ? (
-				<Animated.View style={[style.startScreen, { transform: [{ translateY: titleAnim }] }]}>
-					<Animated.Image source={require('./assets/title.png')} style={[style.title, { transform: [{ translateY: titleAnim }] }]} />
-					<Animated.View style={{ transform: [{ translateY: buttonAnim }] }}>
-						<TouchableOpacity style={style.button} onPress={handleStartGame}>
-							<Image source={require('./assets/images/buttons/home-screen/start.png')} style={style.buttonImage} />
-						</TouchableOpacity>
-						<TouchableOpacity style={style.button} onPress={handleStartGame}>
-							<Image source={require('./assets/images/buttons/home-screen/continue.png')} style={style.buttonImage} />
-						</TouchableOpacity>
-						<TouchableOpacity style={style.button} onPress={handleStartGame}>
-							<Image source={require('./assets/images/buttons/home-screen/gallery.png')} style={style.buttonImage} />
-						</TouchableOpacity>
-						<TouchableOpacity style={style.button} onPress={handleStartGame}>
-							<Image source={require('./assets/images/buttons/home-screen/options-home.png')} style={style.buttonImage} />
-						</TouchableOpacity>
-					</Animated.View>
-				</Animated.View>
-			) : (
-				<View style={{ 'flex': 1, 'justifyContent': 'center', 'alignItems': 'center' }}>
-					<View>
-						<View style={{ 'flex': 1, 'flexDirection': 'row', 'justifyContent': 'space-between', 'top': 16, 'marginHorizontal': 8 }}>
-							<TouchableOpacity style={style.buttonGame} onPress={handleGoHome}>
-								<Image source={require('./assets/images/buttons/ingame/home.png')} style={style.buttonGameImage} />
-							</TouchableOpacity>
-							<TouchableOpacity style={style.buttonGame} onPress={handleResetGame}>
-								<Image source={require('./assets/images/buttons/ingame/options.png')} style={style.buttonGameImage} />
-							</TouchableOpacity>
-						</View>
-						<View style={{ 'flex': 4, 'width': '100%' }}>
-							<View style={{ 'flexDirection': 'row', 'bottom': 16, 'justifyContent': 'space-evenly' }}>
-								<Image source={require('./assets/avatar.png')} style={style.avatar
-								} />
-								<View style={{ 'justifyContent': 'center', 'alignItems': 'center' }}>
-									<Text style={style.waifuData}>Topota madre</Text>
-								</View>
-								<View style={{ 'justifyContent': 'center', 'alignItems': 'center' }}>
-									<Text style={style.waifuData}>1/3</Text>
-								</View>
-							</View>
-							{!victory ? (
-								<ImageBackground
-									source={require('./assets/buscaminas-1.jpeg')}>
-									<Board
-										board={board}
-										onClick={handleClick}
-										onLongPress={handleContextMenu}
-									/>
-								</ImageBackground>
-							) : (
-								<View style={style.victoryImage}>
-									<Image source={require('./assets/buscaminas-1.jpeg')} style={style.victoryImageImg} />
-								</View>
-							)}
-						</View>
-						<View style={{ 'flex': 1, 'width': '100%', 'flexDirection': 'row', 'justifyContent': 'space-evenly', 'alignItems': 'center', 'bottom': 16 }}>
-							<Pressable
-								style={{ width: 50, height: 50, objectFit: 'contain' }}
-								onPress={handleShowPauseOptions}
-							>
-								<Pause handleResetGame={handleResetGame} />
-							</Pressable>
-							<TouchableOpacity style={style.buttonGame} onPress={handleResetGame}>
-								<Image source={require('./assets/images/buttons/ingame/options.png')} style={style.buttonGameImage} />
-							</TouchableOpacity>
-							<TouchableOpacity style={style.buttonGame} onPress={handleResetGame}>
-								<Image source={require('./assets/images/buttons/ingame/options.png')} style={style.buttonGameImage} />
-							</TouchableOpacity>
-						</View>
-					</View>
-				</View>
-			)
-			}
+		<NavigationContainer>
+			<Stack.Navigator initialRouteName="Menu">
+				<Stack.Screen name="Menu" component={Menu} />
+				<Stack.Screen name="WaifuSelect" component={WaifuSelect} />
+				<Stack.Screen name="Play" component={Play} />
+				<Stack.Screen name="Gallery" component={Gallery} />
+				<Stack.Screen name="Options" component={Options} />
+			</Stack.Navigator>
 			<StatusBar style="auto" />
-		</SafeAreaView >
+		</NavigationContainer>
 	);
 };
 
@@ -367,7 +316,7 @@ const style = StyleSheet.create({
 		alignItems: 'center',
 		// justifyContent: 'space-around',
 		width: '100%',
-		marginBottom: 16,
+		// bottom: 16,
 	},
 	waifuData: {
 		fontSize: 20,
@@ -395,14 +344,12 @@ const style = StyleSheet.create({
 		width: 400,  // 10 * 40 (asumiendo 10 columnas de 40px)
 		height: 400,  // 10 * 40 (asumiendo 10 filas de 40px)
 		position: 'relative',
-		backgroundImage: 'url(assets/buscaminas-1.jpeg)',  // Esto no funciona directamente en React Native
 		backgroundSize: 'cover',  // Lo puedes lograr con un ImageBackground en React Native
 
 	},
-	victory: {
-		backgroundImage: 'url(assets/buscaminas-1.jpeg)',
-		backgroundSize: 'cover',
-	},
+	// victory: {
+	// 	backgroundSize: 'cover',
+	// },
 	cell: {
 		width: 40,
 		height: 40,
@@ -437,8 +384,6 @@ const style = StyleSheet.create({
 		backgroundColor: 'yellow',
 	},
 	victoryImage: {
-		justifyContent: 'center',
-		alignItems: 'center',
 		height: 400,
 		width: 400,
 	},
