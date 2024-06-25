@@ -246,61 +246,76 @@ const App = () => {
 
 
 	return (
-		<SafeAreaView style={stylesApp.container}>
+		<SafeAreaView style={style.container}>
 			{!showGame ? (
-				<Animated.View style={[stylesApp.startScreen, { transform: [{ translateY: titleAnim }] }]}>
-					<Animated.Image source={require('./assets/title.png')} style={[stylesApp.title, { transform: [{ translateY: titleAnim }] }]} />
+				<Animated.View style={[style.startScreen, { transform: [{ translateY: titleAnim }] }]}>
+					<Animated.Image source={require('./assets/title.png')} style={[style.title, { transform: [{ translateY: titleAnim }] }]} />
 					<Animated.View style={{ transform: [{ translateY: buttonAnim }] }}>
-						<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-							<Image source={require('./assets/images/buttons/home-screen/start.png')} style={stylesApp.buttonImage} />
+						<TouchableOpacity style={style.button} onPress={handleStartGame}>
+							<Image source={require('./assets/images/buttons/home-screen/start.png')} style={style.buttonImage} />
 						</TouchableOpacity>
-						<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-							<Image source={require('./assets/images/buttons/home-screen/continue.png')} style={stylesApp.buttonImage} />
+						<TouchableOpacity style={style.button} onPress={handleStartGame}>
+							<Image source={require('./assets/images/buttons/home-screen/continue.png')} style={style.buttonImage} />
 						</TouchableOpacity>
-						<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-							<Image source={require('./assets/images/buttons/home-screen/gallery.png')} style={stylesApp.buttonImage} />
+						<TouchableOpacity style={style.button} onPress={handleStartGame}>
+							<Image source={require('./assets/images/buttons/home-screen/gallery.png')} style={style.buttonImage} />
 						</TouchableOpacity>
-						<TouchableOpacity style={stylesApp.button} onPress={handleStartGame}>
-							<Image source={require('./assets/images/buttons/home-screen/options-home.png')} style={stylesApp.buttonImage} />
+						<TouchableOpacity style={style.button} onPress={handleStartGame}>
+							<Image source={require('./assets/images/buttons/home-screen/options-home.png')} style={style.buttonImage} />
 						</TouchableOpacity>
 					</Animated.View>
 				</Animated.View>
 			) : (
-				<View style={styles.app}>
-					<View style={{ 'flexDirection': 'row', 'justifyContent': 'space-between', 'width': '100%', 'position': 'absolute', 'top': 16, 'paddingHorizontal': 16 }}>
-						<TouchableOpacity style={stylesApp.buttonGame} onPress={handleGoHome}>
-							<Image source={require('./assets/images/buttons/ingame/home.png')} style={stylesApp.buttonGameImage} />
-						</TouchableOpacity>
-						<TouchableOpacity style={stylesApp.buttonGame} onPress={handleResetGame}>
-							<Image source={require('./assets/images/buttons/ingame/options.png')} style={stylesApp.buttonGameImage} />
-						</TouchableOpacity>
-					</View>
-					<View style={stylesApp.info}>
-						<Image source={require('./assets/avatar.png')} style={stylesApp.avatar} />
-						<View style={{ 'marginLeft': 16 }}>
-							<Text style={stylesApp.waifuData}>Name: Topota madre</Text>
-							<Text style={stylesApp.waifuData}>Age: 22</Text>
+				<View style={{ 'flex': 1, 'justifyContent': 'center', 'alignItems': 'center' }}>
+					<View>
+						<View style={{ 'flex': 1, 'flexDirection': 'row', 'justifyContent': 'space-between', 'top': 16, 'marginHorizontal': 8 }}>
+							<TouchableOpacity style={style.buttonGame} onPress={handleGoHome}>
+								<Image source={require('./assets/images/buttons/ingame/home.png')} style={style.buttonGameImage} />
+							</TouchableOpacity>
+							<TouchableOpacity style={style.buttonGame} onPress={handleResetGame}>
+								<Image source={require('./assets/images/buttons/ingame/options.png')} style={style.buttonGameImage} />
+							</TouchableOpacity>
 						</View>
-					</View>
-					<View>
-						{!victory ? (
-							<ImageBackground
-								source={require('./assets/buscaminas-1.jpeg')}>
-								<Board board={board} onClick={handleClick} onLongPress={handleContextMenu} />
-							</ImageBackground>
-						) : (
-							<View style={styles.victoryImage}>
-								<Image source={require('./assets/buscaminas-1.jpeg')} style={styles.victoryImageImg} />
+						<View style={{ 'flex': 4, 'width': '100%' }}>
+							<View style={{ 'flexDirection': 'row', 'bottom': 16, 'justifyContent': 'space-evenly' }}>
+								<Image source={require('./assets/avatar.png')} style={style.avatar
+								} />
+								<View style={{ 'justifyContent': 'center', 'alignItems': 'center' }}>
+									<Text style={style.waifuData}>Topota madre</Text>
+								</View>
+								<View style={{ 'justifyContent': 'center', 'alignItems': 'center' }}>
+									<Text style={style.waifuData}>1/3</Text>
+								</View>
 							</View>
-						)}
-					</View>
-					<View>
-						<Pressable
-							style={{ 'marginTop': 16, width: 50, height: 50, objectFit: 'contain' }}
-							onPress={handleShowPauseOptions}
-						>
-							<Pause handleResetGame={handleResetGame} />
-						</Pressable>
+							{!victory ? (
+								<ImageBackground
+									source={require('./assets/buscaminas-1.jpeg')}>
+									<Board
+										board={board}
+										onClick={handleClick}
+										onLongPress={handleContextMenu}
+									/>
+								</ImageBackground>
+							) : (
+								<View style={style.victoryImage}>
+									<Image source={require('./assets/buscaminas-1.jpeg')} style={style.victoryImageImg} />
+								</View>
+							)}
+						</View>
+						<View style={{ 'flex': 1, 'width': '100%', 'flexDirection': 'row', 'justifyContent': 'space-evenly', 'alignItems': 'center', 'bottom': 16 }}>
+							<Pressable
+								style={{ width: 50, height: 50, objectFit: 'contain' }}
+								onPress={handleShowPauseOptions}
+							>
+								<Pause handleResetGame={handleResetGame} />
+							</Pressable>
+							<TouchableOpacity style={style.buttonGame} onPress={handleResetGame}>
+								<Image source={require('./assets/images/buttons/ingame/options.png')} style={style.buttonGameImage} />
+							</TouchableOpacity>
+							<TouchableOpacity style={style.buttonGame} onPress={handleResetGame}>
+								<Image source={require('./assets/images/buttons/ingame/options.png')} style={style.buttonGameImage} />
+							</TouchableOpacity>
+						</View>
 					</View>
 				</View>
 			)
@@ -310,7 +325,7 @@ const App = () => {
 	);
 };
 
-const stylesApp = StyleSheet.create({
+const style = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
@@ -365,7 +380,72 @@ const stylesApp = StyleSheet.create({
 		borderColor: 'black',
 		borderWidth: 1,
 		objectFit: 'cover',
-	}
+	},
+	app: {
+		flex: 1,
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		position: 'relative'
+	},
+	board: {
+		display: 'grid',  // React Native no tiene soporte directo para grid, puedes usar flexbox
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		width: 400,  // 10 * 40 (asumiendo 10 columnas de 40px)
+		height: 400,  // 10 * 40 (asumiendo 10 filas de 40px)
+		position: 'relative',
+		backgroundImage: 'url(assets/buscaminas-1.jpeg)',  // Esto no funciona directamente en React Native
+		backgroundSize: 'cover',  // Lo puedes lograr con un ImageBackground en React Native
+
+	},
+	victory: {
+		backgroundImage: 'url(assets/buscaminas-1.jpeg)',
+		backgroundSize: 'cover',
+	},
+	cell: {
+		width: 40,
+		height: 40,
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderWidth: 1,
+		borderColor: '#ccc',
+	},
+	hidden: {
+		backgroundColor: '#fff',
+		backgroundImage: 'url(./assets/hidden.png)',
+	},
+	revealed: {
+		backgroundColor: '#fff',
+	},
+	empty: {
+		backgroundColor: '#000000A3',
+	},
+	number: {
+		backgroundColor: '#ddd',
+	},
+	bomb: {
+		justifyContent: 'flex-start',
+		alignItems: 'start',
+	},
+	bombImage: {
+		width: 40,
+		height: 40,
+		resizeMode: 'cover',
+	},
+	flagged: {
+		backgroundColor: 'yellow',
+	},
+	victoryImage: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		height: 400,
+		width: 400,
+	},
+	victoryImageImg: {
+		maxWidth: '100%',
+		maxHeight: '100%',
+	},
 });
 
 export default App;
