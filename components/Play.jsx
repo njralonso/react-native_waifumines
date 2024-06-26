@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { ImageBackground, Alert, Animated, View, Image, Text, Pressable } from "react-native";
+import { ImageBackground, Alert, Animated, View, Image, Text, Pressable, Modal, StyleSheet } from "react-native";
+import Ionicons from '@expo/vector-icons/FontAwesome';
 import Board from "./Board";
-
+import CustomModal from "./CustomModal";
 const generateBoard = (rows, cols, mines) => {
 	let board = Array(rows)
 		.fill(null)
@@ -50,6 +51,8 @@ const generateBoard = (rows, cols, mines) => {
 
 export default Play = ({ route, navigation }) => {
 	const { waifu } = route.params;
+
+	const [modalVisible, setModalVisible] = useState(false);
 	const [board, setBoard] = useState([]);
 	const [gameOver, setGameOver] = useState(false);
 	const [victory, setVictory] = useState(false);
@@ -148,28 +151,37 @@ export default Play = ({ route, navigation }) => {
 		}
 	};
 
+	const handleGoToHome = () => {
+		navigation.navigate('Menu');
+		setGameOver(true)
+	}
+	const handleShowOptions = () => { }
+
 	return (
-		<View style={{ 'flex': 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'red' }}>
-			<View style={{ 'flexDirection': 'row', 'width': '100%', 'flex': 1, justifyContent: 'space-between', top: 16, paddingHorizontal: 16, backgroundColor: 'yellow' }}>
-				<Pressable>
-					<Image source={require('../assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50 }} />
+		<View style={{ 'flex': 1, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'red' }}>
+			{/* Game Options Modal */}
+			<CustomModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
+			{/* Game Options Modal */}
+			<View style={{ 'flexDirection': 'row', 'width': '100%', justifyContent: 'space-between', top: 16, paddingHorizontal: 16, backgroundColor: 'yellow' }}>
+				<Pressable onPress={handleGoToHome} style={{ backgroundColor: 'pink', }}>
+					<Image source={require('../assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50, backgroundColor: 'red' }} />
 				</Pressable>
-				<Pressable>
+				<Pressable onPress={() => setModalVisible(true)}>
 					<Image source={require('../assets/images/buttons/ingame/options.png')} style={{ 'width': 50, 'height': 50 }} />
 				</Pressable>
 			</View>
-			<View style={{ backgroundColor: 'blue' }}>
-				<View style={{ flexDirection: 'row', backgroundColor: 'orange' }}>
-					<Image source={waifu.avatar} style={{ 'width': 100, 'height': 100 }} />
-					<View style={{ left: 8, justifyContent: 'center', alignItems: 'center' }}>
-						<Text>
-							Name: {waifu.name}
-						</Text>
-						<Text>
-							Age: {waifu.age}
-						</Text>
-					</View>
+			<View style={{ width: '100%', flexDirection: 'row', backgroundColor: 'orange' }}>
+				<Image source={waifu.avatar} style={{ 'width': 100, 'height': 100 }} />
+				<View style={{ left: 8, justifyContent: 'center', alignItems: 'center' }}>
+					<Text>
+						Name: {waifu.name}
+					</Text>
+					<Text>
+						Age: {waifu.age}
+					</Text>
 				</View>
+			</View>
+			<View style={{ backgroundColor: 'blue', bottom: 32 }}>
 				<Animated.View style={{ opacity: fadeAnim }}>
 					<ImageBackground
 						source={require('../assets/buscaminas-2.jpeg')}>
@@ -189,11 +201,57 @@ export default Play = ({ route, navigation }) => {
 					</Animated.View>
 				)}
 			</View>
-			<View style={{ 'flex': 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'green' }}>
-				<Text>
-					sdfasdf
+			<View style={{ flexDirection: 'row', alignItems: 'center', bottom: 48 }}>
+				<Ionicons name="arrow-left" size={48} color="grey" />
+				<Text style={{ fontSize: 32, marginHorizontal: 16 }}>
+					Stage 1 of 3
 				</Text>
+				{victory ? <Ionicons name="arrow-right" size={48} color="green" /> : <Ionicons name="arrow-right" size={48} color="grey" />}
 			</View>
 		</View >
 	);
 }
+
+const styles = StyleSheet.create({
+	centeredView: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginTop: 22,
+	},
+	modalView: {
+		margin: 20,
+		backgroundColor: 'white',
+		borderRadius: 20,
+		padding: 35,
+		alignItems: 'center',
+		shadowColor: '#000',
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
+	},
+	button: {
+		borderRadius: 20,
+		padding: 10,
+		elevation: 2,
+	},
+	buttonOpen: {
+		backgroundColor: '#F194FF',
+	},
+	buttonClose: {
+		backgroundColor: '#2196F3',
+	},
+	textStyle: {
+		color: 'white',
+		fontWeight: 'bold',
+		textAlign: 'center',
+	},
+	modalText: {
+		marginBottom: 15,
+		textAlign: 'center',
+	},
+});
