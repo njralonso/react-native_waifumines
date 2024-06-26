@@ -1,19 +1,36 @@
-import { View, Text, Pressable, Image, ImageBackground, ScrollView } from "react-native"
+import { View, Text, Pressable, ImageBackground, ScrollView } from "react-native"
 import { useNavigation } from '@react-navigation/native';
 
-let waifuInfo = {
-	'name': 'Airi',
-	'age': 22,
-	'avatar': require('../assets/images/characters/avatar.png'),
-	'stageOne': require('../assets/buscaminas-2.jpeg'),
-}
+let waifuInfo = [
+	{
+		name: 'Hana',
+		avatar: require('../assets/images/characters/hana/avatar.png'),
+		stageOne: require('../assets/images/characters/hana/stageOne.png'),
+		stageTwo: require('../assets/images/characters/hana/stageTwo.png'),
+		stageThree: require('../assets/images/characters/hana/stageThree.png')
+	},
+	{
+		name: 'Eula',
+		avatar: require('../assets/images/characters/eula/avatar.png'),
+		stageOne: require('../assets/images/characters/eula/stageOne.png'),
+		stageTwo: require('../assets/images/characters/eula/stageTwo.png'),
+		stageThree: require('../assets/images/characters/eula/stageThree.png')
+	},
+	// {
+	// 	name: 'Ania',
+	// 	avatar: require('../assets/images/characters/ania/avatar.png'),
+	// 	stageOne: require('../assets/images/characters/ania/stageOne.png'),
+	// 	stageTwo: require('../assets/images/characters/ania/stageTwo.png'),
+	// 	stageThree: require('../assets/images/characters/ania/stageThree.png')
+	// },
+]
 
 
 export default WaifuSelect = () => {
 	const navigation = useNavigation();
 
-	const handlePress = () => {
-		navigation.navigate('Play', { 'waifu': waifuInfo });
+	const handlePress = (waifuSelected) => {
+		navigation.navigate('Play', { 'waifu': waifuSelected });
 	};
 
 	return (
@@ -23,78 +40,17 @@ export default WaifuSelect = () => {
 			</View>
 			<ScrollView style={{}}>
 				<View style={{ justifyContent: 'space-evenly', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', paddingVertical: 32 }}>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
-					<View style={{ margin: 4 }}>
-						<Pressable onPress={handlePress} style={{}}>
-							<ImageBackground source={require('../assets/images/characters/avatar.png')} style={{ width: 150, height: 150, objectFit: 'contain' }}>
-							</ImageBackground>
-						</Pressable>
-					</View>
+					{waifuInfo.map((waifu, key) => {
+						return (
+							<View key={key} style={{ margin: 4 }}>
+								<Pressable onPress={() => handlePress(waifu)} style={{}}>
+									<ImageBackground source={waifu.avatar} style={{ width: 150, height: 150, objectFit: 'contain' }}>
+									</ImageBackground>
+									<Text style={{ alignSelf: 'center', fontSize: 32 }}>{waifu.name}</Text>
+								</Pressable>
+							</View>
+						)
+					})}
 				</View>
 			</ScrollView>
 		</View >

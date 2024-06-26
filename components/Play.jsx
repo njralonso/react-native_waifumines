@@ -3,6 +3,8 @@ import { ImageBackground, Alert, Animated, View, Image, Text, Pressable, Modal, 
 import Ionicons from '@expo/vector-icons/FontAwesome';
 import Board from "./Board";
 import CustomModal from "./CustomModal";
+import Modals from "./Modals";
+
 const generateBoard = (rows, cols, mines) => {
 	let board = Array(rows)
 		.fill(null)
@@ -50,7 +52,7 @@ const generateBoard = (rows, cols, mines) => {
 };
 
 export default Play = ({ route, navigation }) => {
-	const { waifu } = route.params;
+	const { waifu } = route.params; // Información del personaje seleccionado
 
 	const [modalVisible, setModalVisible] = useState(false);
 	const [board, setBoard] = useState([]);
@@ -79,7 +81,9 @@ export default Play = ({ route, navigation }) => {
 			setGameOver(true);
 			revealBoard(newBoard);
 			setBoard(newBoard);
-			Alert.alert('Game Over');
+			<Modals>
+				<Text>aaaaa</Text>
+			</Modals>
 		} else {
 			revealCell(newBoard, row, col);
 			setBoard(newBoard);
@@ -155,7 +159,10 @@ export default Play = ({ route, navigation }) => {
 		navigation.navigate('Menu');
 		setGameOver(true)
 	}
-	const handleShowOptions = () => { }
+
+	const handleGoNext = () => {
+		console.log('handleGoNext')
+	}
 
 	return (
 		<View style={{ 'flex': 1, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'red' }}>
@@ -174,10 +181,7 @@ export default Play = ({ route, navigation }) => {
 				<Image source={waifu.avatar} style={{ 'width': 100, 'height': 100 }} />
 				<View style={{ left: 8, justifyContent: 'center', alignItems: 'center' }}>
 					<Text>
-						Name: {waifu.name}
-					</Text>
-					<Text>
-						Age: {waifu.age}
+						{waifu.name}
 					</Text>
 				</View>
 			</View>
@@ -206,7 +210,7 @@ export default Play = ({ route, navigation }) => {
 				<Text style={{ fontSize: 32, marginHorizontal: 16 }}>
 					Stage 1 of 3
 				</Text>
-				{victory ? <Ionicons name="arrow-right" size={48} color="green" /> : <Ionicons name="arrow-right" size={48} color="grey" />}
+				{victory ? <Ionicons name="arrow-right" size={48} color="green" onPress={handleGoNext} /> : <Ionicons name="arrow-right" size={48} color="grey" />}
 			</View>
 		</View >
 	);

@@ -1,27 +1,6 @@
 import React, { useState } from 'react'
 import { View, Text, Pressable, Image, Modal, StyleSheet } from "react-native"
 
-let waifuInfo = [{
-	'name': 'Airi',
-	'age': 22,
-	'img': require('../assets/images/characters/avatar.png')
-},
-{
-	'name': 'Mika',
-	'age': 24,
-	'img': require('../assets/images/characters/avatar.png')
-},
-{
-	'name': 'Sora',
-	'age': 20,
-	'img': require('../assets/images/characters/avatar.png')
-},
-{
-	'name': 'Miku',
-	'age': 18,
-	'img': require('../assets/images/characters/avatar.png')
-}
-]
 
 export default Gallery = () => {
 	const [modalVisible, setModalVisible] = useState(false);
