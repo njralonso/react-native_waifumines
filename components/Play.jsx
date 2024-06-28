@@ -3,7 +3,7 @@ import { ImageBackground, Alert, Animated, View, Image, Text, Pressable, Modal, 
 import Ionicons from '@expo/vector-icons/FontAwesome';
 import Board from "./Board";
 import CustomModal from "./CustomModal";
-import Modals from "./Modals";
+import GameLossModal from "./GameLossModal";
 
 const generateBoard = (rows, cols, mines) => {
 	let board = Array(rows)
@@ -81,9 +81,6 @@ export default Play = ({ route, navigation }) => {
 			setGameOver(true);
 			revealBoard(newBoard);
 			setBoard(newBoard);
-			<Modals>
-				<Text>aaaaa</Text>
-			</Modals>
 		} else {
 			revealCell(newBoard, row, col);
 			setBoard(newBoard);
@@ -164,11 +161,34 @@ export default Play = ({ route, navigation }) => {
 		console.log('handleGoNext')
 	}
 
+	const handleRestartGame = () => {
+		const newBoard = generateBoard(10, 10, 3);
+		setBoard(newBoard)
+		setInitialized(true)
+		setNewGame(true)
+		setGameOver(false)
+	}
+
 	return (
 		<View style={{ 'flex': 1, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'red' }}>
 			{/* Game Options Modal */}
 			<CustomModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
 			{/* Game Options Modal */}
+			{/* Game Over Modal */}
+			{gameOver && (<GameLossModal modalVisible={gameOver}>
+				<View>
+					<Text style={{ fontSize: 24, marginBottom: 16 }}>Game over</Text>
+					<View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+						<Pressable onPress={handleGoToHome} style={{ backgroundColor: 'pink' }}>
+							<Image source={require('../assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50, backgroundColor: 'red' }} />
+						</Pressable>
+						<Pressable onPress={handleRestartGame}>
+							<Image source={require('../assets/images/buttons/ingame/retry.png')} style={{ 'width': 50, 'height': 50 }} />
+						</Pressable>
+					</View>
+				</View>
+			</GameLossModal>)}
+			{/* Game Over Modal */}
 			<View style={{ 'flexDirection': 'row', 'width': '100%', justifyContent: 'space-between', top: 16, paddingHorizontal: 16, backgroundColor: 'yellow' }}>
 				<Pressable onPress={handleGoToHome} style={{ backgroundColor: 'pink', }}>
 					<Image source={require('../assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50, backgroundColor: 'red' }} />
