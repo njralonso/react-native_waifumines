@@ -61,6 +61,7 @@ export default Play = ({ route, navigation }) => {
 	const [initialized, setInitialized] = useState(false); // Nuevo estado para controlar la inicialización del juego
 	const [newGame, setNewGame] = useState(false); // Estado para controlar el inicio de un nuevo juego
 	const [fadeAnim] = useState(new Animated.Value(1)); // Valor inicial de opacidad para el Board
+	const [currentStage, setCurrentStage] = useState(1);
 
 	/**
 	 * Game Start Effect
@@ -70,7 +71,7 @@ export default Play = ({ route, navigation }) => {
 		setBoard(newBoard);
 		setInitialized(true); // Marcamos que el juego se ha inicializado
 		setNewGame(false); // Reseteamos el estado de nuevo juego
-	}, [setNewGame]);
+	}, [setNewGame, setCurrentStage]);
 
 
 	const handleClick = (row, col) => {
@@ -158,7 +159,16 @@ export default Play = ({ route, navigation }) => {
 	}
 
 	const handleGoNext = () => {
-		console.log('handleGoNext')
+		if (currentStage < 3) {
+			setCurrentStage(currentStage + 1);
+			setBoard(generateBoard(10, 10, 3));
+			setVictory(false);
+			setGameOver(false);
+			fadeAnim.setValue(1);
+		} else {
+			Alert.alert("Felicidades", "Has completado todos los niveles.");
+			navigation.navigate('Menu');
+		}
 	}
 
 	const handleRestartGame = () => {
@@ -169,18 +179,31 @@ export default Play = ({ route, navigation }) => {
 		setGameOver(false)
 	}
 
+	const getCurrentStageImage = () => {
+		switch (currentStage) {
+			case 1:
+				return waifu.stageOne;
+			case 2:
+				return waifu.stageTwo;
+			case 3:
+				return waifu.stageThree;
+			default:
+				return waifu.stageOne;
+		}
+	};
+
 	return (
-		<View style={{ 'flex': 1, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'red' }}>
+		<View style={{ 'flex': 1, justifyContent: 'space-between', alignItems: 'center' }}>
 			{/* Game Options Modal */}
-			<CustomModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
+			{/* <CustomModal modalVisible={modalVisible} setModalVisible={setModalVisible} /> */}
 			{/* Game Options Modal */}
 			{/* Game Over Modal */}
 			{gameOver && (<GameLossModal modalVisible={gameOver}>
 				<View>
 					<Text style={{ fontSize: 24, marginBottom: 16 }}>Game over</Text>
 					<View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-						<Pressable onPress={handleGoToHome} style={{ backgroundColor: 'pink' }}>
-							<Image source={require('../assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50, backgroundColor: 'red' }} />
+						<Pressable onPress={handleGoToHome}>
+							<Image source={require('../assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50 }} />
 						</Pressable>
 						<Pressable onPress={handleRestartGame}>
 							<Image source={require('../assets/images/buttons/ingame/retry.png')} style={{ 'width': 50, 'height': 50 }} />
@@ -189,26 +212,24 @@ export default Play = ({ route, navigation }) => {
 				</View>
 			</GameLossModal>)}
 			{/* Game Over Modal */}
-			<View style={{ 'flexDirection': 'row', 'width': '100%', justifyContent: 'space-between', top: 16, paddingHorizontal: 16, backgroundColor: 'yellow' }}>
-				<Pressable onPress={handleGoToHome} style={{ backgroundColor: 'pink', }}>
-					<Image source={require('../assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50, backgroundColor: 'red' }} />
+			<View style={{ 'flexDirection': 'row', 'width': '100%', justifyContent: 'space-between', top: 16, paddingHorizontal: 16 }}>
+				<Pressable onPress={handleGoToHome}>
+					<Image source={require('../assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50 }} />
 				</Pressable>
 				<Pressable onPress={() => setModalVisible(true)}>
 					<Image source={require('../assets/images/buttons/ingame/options.png')} style={{ 'width': 50, 'height': 50 }} />
 				</Pressable>
 			</View>
-			<View style={{ width: '100%', flexDirection: 'row', backgroundColor: 'orange' }}>
+			<View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+				<Text style={{ fontSize: 32 }}>
+					{waifu.name}
+				</Text>
 				<Image source={waifu.avatar} style={{ 'width': 100, 'height': 100 }} />
-				<View style={{ left: 8, justifyContent: 'center', alignItems: 'center' }}>
-					<Text>
-						{waifu.name}
-					</Text>
-				</View>
 			</View>
-			<View style={{ backgroundColor: 'blue', bottom: 32 }}>
+			<View style={{ bottom: 36 }}>
 				<Animated.View style={{ opacity: fadeAnim }}>
 					<ImageBackground
-						source={require('../assets/buscaminas-2.jpeg')}>
+						source={getCurrentStageImage()}>
 						<Board
 							board={board}
 							onClick={handleClick}
@@ -219,8 +240,8 @@ export default Play = ({ route, navigation }) => {
 				{victory && (
 					<Animated.View style={{ opacity: fadeAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }), position: 'absolute' }}>
 						<ImageBackground
-							source={require('../assets/buscaminas-2.jpeg')}
-							style={{ 'width': 400, 'height': 400, 'objectFit': 'contain' }}
+							source={getCurrentStageImage()}
+							style={{ width: 400, height: 400, objectFit: 'contain' }}
 						/>
 					</Animated.View>
 				)}
@@ -228,7 +249,7 @@ export default Play = ({ route, navigation }) => {
 			<View style={{ flexDirection: 'row', alignItems: 'center', bottom: 48 }}>
 				<Ionicons name="arrow-left" size={48} color="grey" />
 				<Text style={{ fontSize: 32, marginHorizontal: 16 }}>
-					Stage 1 of 3
+					{currentStage} / 3
 				</Text>
 				{victory ? <Ionicons name="arrow-right" size={48} color="green" onPress={handleGoNext} /> : <Ionicons name="arrow-right" size={48} color="grey" />}
 			</View>
@@ -237,6 +258,7 @@ export default Play = ({ route, navigation }) => {
 }
 
 const styles = StyleSheet.create({
+	boardBackground: {},
 	centeredView: {
 		flex: 1,
 		justifyContent: 'center',

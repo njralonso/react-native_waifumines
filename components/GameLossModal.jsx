@@ -9,15 +9,14 @@ const GameLossModal = ({ children, onPress }) => {
 				<View style={styles.modalView}>
 					{children}
 					<Pressable
-						onPress={onPress}>
+						onPress={onPress}
+					>
 					</Pressable>
 				</View>
 			</View>
 		</Modal>
 	);
 };
-
-export default GameLossModal;
 
 const styles = StyleSheet.create({
 	centeredView: {
@@ -62,3 +61,5 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 });
+
+export default GameLossModal;
