@@ -1,20 +1,20 @@
 import { View, Text, Pressable, ImageBackground, ScrollView } from "react-native"
 import { useNavigation } from '@react-navigation/native';
 
-let waifuInfo = [
+export let waifuInfo = [
 	{
 		name: 'Hana',
 		avatar: require('../assets/images/characters/hana/avatar.png'),
-		stageOne: require('../assets/images/characters/hana/stageOne.png'),
-		stageTwo: require('../assets/images/characters/hana/stageTwo.png'),
-		stageThree: require('../assets/images/characters/hana/stageThree.png')
+		1: require('../assets/images/characters/hana/stageOne.png'),
+		2: require('../assets/images/characters/hana/stageTwo.png'),
+		3: require('../assets/images/characters/hana/stageThree.png')
 	},
 	{
 		name: 'Eula',
 		avatar: require('../assets/images/characters/eula/avatar.png'),
-		stageOne: require('../assets/images/characters/eula/stageOne.png'),
-		stageTwo: require('../assets/images/characters/eula/stageTwo.png'),
-		stageThree: require('../assets/images/characters/eula/stageThree.png')
+		1: require('../assets/images/characters/eula/stageOne.png'),
+		2: require('../assets/images/characters/eula/stageTwo.png'),
+		3: require('../assets/images/characters/eula/stageThree.png')
 	},
 	// {
 	// 	name: 'Ania',

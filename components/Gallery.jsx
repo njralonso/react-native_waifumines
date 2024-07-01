@@ -1,80 +1,36 @@
-import React, { useState } from 'react'
-import { View, Text, Pressable, Image, Modal, StyleSheet } from "react-native"
+import { View, Text, Image, Dimensions, Pressable } from "react-native"
+import { useNavigation } from '@react-navigation/native';
+import { waifuInfo } from "./WaifuSelect"
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default Gallery = () => {
-	const [modalVisible, setModalVisible] = useState(false);
+	const navigation = useNavigation();
+
+	const handleGoToGalerryWaifuSelect = () => {
+		navigation.navigate('GalleryWaifuSelect');
+	};
 
 	return (
-		<View style={styles.centeredView}>
-			<Modal
-				animationType="slide"
-				transparent={true}
-				visible={modalVisible}
-				onRequestClose={() => {
-					Alert.alert('Modal has been closed.');
-					setModalVisible(!modalVisible);
-				}}>
-				<View style={styles.centeredView}>
-					<View style={styles.modalView}>
-						<Text style={styles.modalText}>Hello World!</Text>
-						<Pressable
-							style={[styles.button, styles.buttonClose]}
-							onPress={() => setModalVisible(!modalVisible)}>
-							<Text style={styles.textStyle}>Hide Modal</Text>
-						</Pressable>
-					</View>
-				</View>
-			</Modal>
-			<Pressable
-				style={[styles.button, styles.buttonOpen]}
-				onPress={() => setModalVisible(true)}>
-				<Text style={styles.textStyle}>Show Modal</Text>
-			</Pressable>
-		</View>
+		<View style={{ flex: 1 }}>
+			<View>
+				<Text style={{ fontSize: 48, textAlign: 'center', backgroundColor: "#2196F3", width: windowWidth }}>Gallery</Text>
+			</View>
+			<View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', top: 16, width: windowWidth }}>
+				{waifuInfo.map((waifu, key) => <View key={key}>
+					<Text
+						style={{ fontSize: 32, textAlign: 'center' }}>
+						{waifu.name}
+					</Text>
+					<Pressable onPress={() => handleGoToGalerryWaifuSelect()}>
+						<Image
+							source={waifu.avatar}
+							style={{ width: 150, height: 150, objectFit: 'contain' }}
+						/>
+					</Pressable>
+				</View>)}
+			</View>
+		</View >
 	)
 }
-
-const styles = StyleSheet.create({
-	centeredView: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		marginTop: 22,
-	},
-	modalView: {
-		margin: 20,
-		backgroundColor: 'white',
-		borderRadius: 20,
-		padding: 35,
-		alignItems: 'center',
-		shadowColor: '#000',
-		shadowOffset: {
-			width: 0,
-			height: 2,
-		},
-		shadowOpacity: 0.25,
-		shadowRadius: 4,
-		elevation: 5,
-	},
-	button: {
-		borderRadius: 20,
-		padding: 10,
-		elevation: 2,
-	},
-	buttonOpen: {
-		backgroundColor: '#F194FF',
-	},
-	buttonClose: {
-		backgroundColor: '#2196F3',
-	},
-	textStyle: {
-		color: 'white',
-		fontWeight: 'bold',
-		textAlign: 'center',
-	},
-	modalText: {
-		marginBottom: 15,
-		textAlign: 'center',
-	},
-});

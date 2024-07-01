@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { ImageBackground, Alert, Animated, View, Image, Text, Pressable, Modal, StyleSheet } from "react-native";
+import { ImageBackground, Alert, Animated, View, Image, Text, Pressable, Modal, StyleSheet, Dimensions } from "react-native";
+const { width, height } = Dimensions.get('window');
 import Ionicons from '@expo/vector-icons/FontAwesome';
 import Board from "./Board";
 import CustomModal from "./CustomModal";
 import GameLossModal from "./GameLossModal";
+import FlashMessage from "./FlashMessage";
 
 const generateBoard = (rows, cols, mines) => {
 	let board = Array(rows)
@@ -62,6 +64,7 @@ export default Play = ({ route, navigation }) => {
 	const [newGame, setNewGame] = useState(false); // Estado para controlar el inicio de un nuevo juego
 	const [fadeAnim] = useState(new Animated.Value(1)); // Valor inicial de opacidad para el Board
 	const [currentStage, setCurrentStage] = useState(1);
+	const [visible, setVisible] = useState(false); // Shows flash message at the start of the boardstage
 
 	/**
 	 * Game Start Effect
@@ -73,6 +76,17 @@ export default Play = ({ route, navigation }) => {
 		setNewGame(false); // Reseteamos el estado de nuevo juego
 	}, [setNewGame, setCurrentStage]);
 
+	/**
+	 * Show puzzle number at the start with a flash message
+	 */
+	useEffect(() => {
+		setVisible(true);
+		const timer = setTimeout(() => {
+			setVisible(false);
+		}, 1500);
+
+		return () => clearTimeout(timer);
+	}, [visible]);
 
 	const handleClick = (row, col) => {
 		if (gameOver || victory || board[row][col].revealed || board[row][col].flagged) return;
@@ -144,12 +158,8 @@ export default Play = ({ route, navigation }) => {
 		}
 		if (victoryAchieved) {
 			setVictory(true);
-			// revealBoard(board);
-			Animated.timing(fadeAnim, {
-				toValue: 0, // Valor final de opacidad para el Board
-				duration: 1000, // Duración de la animación en milisegundos
-				useNativeDriver: true,
-			}).start();
+			setInitialized(false)
+			revealBoard(board);
 		}
 	};
 
@@ -164,6 +174,7 @@ export default Play = ({ route, navigation }) => {
 			setBoard(generateBoard(10, 10, 3));
 			setVictory(false);
 			setGameOver(false);
+			setInitialized(true)
 			fadeAnim.setValue(1);
 		} else {
 			Alert.alert("Felicidades", "Has completado todos los niveles.");
@@ -182,20 +193,20 @@ export default Play = ({ route, navigation }) => {
 	const getCurrentStageImage = () => {
 		switch (currentStage) {
 			case 1:
-				return waifu.stageOne;
+				return waifu[currentStage];
 			case 2:
-				return waifu.stageTwo;
+				return waifu[currentStage];
 			case 3:
-				return waifu.stageThree;
+				return waifu[currentStage];
 			default:
-				return waifu.stageOne;
+				return waifu[currentStage];
 		}
 	};
 
 	return (
 		<View style={{ 'flex': 1, justifyContent: 'space-between', alignItems: 'center' }}>
 			{/* Game Options Modal */}
-			{/* <CustomModal modalVisible={modalVisible} setModalVisible={setModalVisible} /> */}
+			<CustomModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
 			{/* Game Options Modal */}
 			{/* Game Over Modal */}
 			{gameOver && (<GameLossModal modalVisible={gameOver}>
@@ -212,6 +223,17 @@ export default Play = ({ route, navigation }) => {
 				</View>
 			</GameLossModal>)}
 			{/* Game Over Modal */}
+			{/* Show Image Modal */}
+			{victory && (<GameLossModal modalVisible={victory}>
+				<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+					<Text style={{ backgroundColor: 'blue', fontSize: 32 }}>{waifu.name}</Text>
+					<Image source={waifu[currentStage]} style={{ flex: 1, width: width, height: height, objectFit: 'contain' }} />
+				</View>
+				<View style={{ flexDirection: 'row', alignItems: 'center', bottom: 48 }}>
+					{victory && <Ionicons.Button color="green" backgroundColor='transparent' onPress={handleGoNext}>Go next ➡️</Ionicons.Button>}
+				</View>
+			</GameLossModal>)}
+			{/* Show Image Modal */}
 			<View style={{ 'flexDirection': 'row', 'width': '100%', justifyContent: 'space-between', top: 16, paddingHorizontal: 16 }}>
 				<Pressable onPress={handleGoToHome}>
 					<Image source={require('../assets/images/buttons/ingame/home.png')} style={{ 'width': 50, 'height': 50 }} />
@@ -220,13 +242,13 @@ export default Play = ({ route, navigation }) => {
 					<Image source={require('../assets/images/buttons/ingame/options.png')} style={{ 'width': 50, 'height': 50 }} />
 				</Pressable>
 			</View>
-			<View style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-				<Text style={{ fontSize: 32 }}>
-					{waifu.name}
-				</Text>
-				<Image source={waifu.avatar} style={{ 'width': 100, 'height': 100 }} />
-			</View>
-			<View style={{ bottom: 36 }}>
+			<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+				<View style={{ justifyContent: 'center', alignItems: 'center', bottom: 32 }}>
+					<Text style={{ fontSize: 32 }}>
+						{waifu.name}
+					</Text>
+					<Image source={waifu.avatar} style={{ 'width': 100, 'height': 100 }} />
+				</View>
 				<Animated.View style={{ opacity: fadeAnim }}>
 					<ImageBackground
 						source={getCurrentStageImage()}>
@@ -237,22 +259,11 @@ export default Play = ({ route, navigation }) => {
 						/>
 					</ImageBackground>
 				</Animated.View>
-				{victory && (
-					<Animated.View style={{ opacity: fadeAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }), position: 'absolute' }}>
-						<ImageBackground
-							source={getCurrentStageImage()}
-							style={{ width: 400, height: 400, objectFit: 'contain' }}
-						/>
-					</Animated.View>
-				)}
 			</View>
-			<View style={{ flexDirection: 'row', alignItems: 'center', bottom: 48 }}>
-				<Ionicons name="arrow-left" size={48} color="grey" />
-				<Text style={{ fontSize: 32, marginHorizontal: 16 }}>
-					{currentStage} / 3
-				</Text>
-				{victory ? <Ionicons name="arrow-right" size={48} color="green" onPress={handleGoNext} /> : <Ionicons name="arrow-right" size={48} color="grey" />}
+			<View style={{ bottom: 48 }}>
+				<Text style={{ fontSize: 32 }}>Stage {currentStage}</Text>
 			</View>
+			{initialized && <FlashMessage message={waifu.name + ' Puzzle ' + currentStage} visible={visible} />}
 		</View >
 	);
 }
